@@ -1,6 +1,9 @@
 package com.example.cis183_homework03_studentreg;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +15,9 @@ public class StudentDetailsActivity extends AppCompatActivity {
     //for viewing and editing the details of a specific student
     //admin cannot edit primary key
 
+    Button btn_j_back;
+    Intent mainActivity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,6 +27,20 @@ public class StudentDetailsActivity extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+
+        btn_j_back = findViewById(R.id.btn_v_studentDetails_back);
+        mainActivity = new Intent(StudentDetailsActivity.this, MainActivity.class);
+
+        buttonListener();
+    }
+
+    private void buttonListener() {
+        btn_j_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(mainActivity);
+            }
         });
     }
 }

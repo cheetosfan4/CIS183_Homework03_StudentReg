@@ -20,6 +20,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + students_table_name + ";");
+        db.execSQL("DROP TABLE IF EXISTS " + majors_table_name + ";");
 
+        onCreate(db);
     }
+
+    public String getStudentsTableName() {
+        return students_table_name;
+    }
+    public String getMajorsTableName() {
+        return majors_table_name;
+    }
+
+
 }
