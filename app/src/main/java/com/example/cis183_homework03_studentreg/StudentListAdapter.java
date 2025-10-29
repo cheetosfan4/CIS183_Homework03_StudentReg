@@ -13,9 +13,9 @@ public class StudentListAdapter extends BaseAdapter {
     Context context;
     ArrayList<Student> studentList;
 
-    public StudentListAdapter(Context c, ArrayList<Student> s) {
+    public StudentListAdapter(Context c, ArrayList<Student> sl) {
         context = c;
-        studentList = s;
+        studentList = sl;
     }
 
     @Override
@@ -40,7 +40,6 @@ public class StudentListAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.student_cell, null);
         }
 
-        //reference gui elements from cell here
         TextView tv_j_fName = convertView.findViewById(R.id.tv_v_studentCell_fName);
         TextView tv_j_lName = convertView.findViewById(R.id.tv_v_studentCell_lName);
         TextView tv_j_username = convertView.findViewById(R.id.tv_v_studentCell_username);

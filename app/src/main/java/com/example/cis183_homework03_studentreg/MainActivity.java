@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         btn_j_addStudent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                addStudentActivity.putExtra("majorList", majorList);
                 startActivity(addStudentActivity);
             }
         });

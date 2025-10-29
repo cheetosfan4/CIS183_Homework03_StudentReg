@@ -13,7 +13,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String students_table_name = "Students";
     private static final String majors_table_name = "Majors";
     public DatabaseHelper(Context c) {
-        super(c, database_name, null, 5);
+        super(c, database_name, null, 6);
     }
 
     @Override
@@ -120,11 +120,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 student.setEmail(cursor.getString(3));
                 student.setAge(cursor.getInt(4));
                 student.setGPA(cursor.getDouble(5));
+                /*
                 //1 is subtracted because the majorID increments starting at 1, but the array starts at 0
                 majorID = cursor.getInt(6) - 1;
                 //uses the major list to give the student the major object
                 //based on the student's major id in the table
                 student.setMajor(majorList.get(majorID));
+                */
+                //fixed version of above code, in case a major is removed
+                //this would create a gap in the majorIDs
+                majorID = cursor.getInt(6);
+                for (int i = 0; i < majorList.size(); i++) {
+                    if (majorList.get(i).getID() == majorID) {
+                        student.setMajor(majorList.get(i));
+                        break;
+                    }
+                }
 
 
                 studentList.add(student);
@@ -135,6 +146,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return studentList;
+    }
+
+
+
+    public void addStudentToDatabase(Student student) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String username = student.getUsername();
+        String fName = student.getFirstName();
+        String lName = student.getLastName();
+        String email = student.getEmail();
+        int age = student.getAge();
+        double GPA = student.getGPA();
+        int majorID = student.getMajor().getID();
+
+        String information = "'" + username + "', '" + fName + "', '" + lName + "', '" + email + "', " + age + ", " + GPA + ", " + majorID;
+        db.execSQL("INSERT INTO " + students_table_name + " (username, fName, lName, email, age, GPA, majorID) VALUES (" + information + ");");
     }
 
     public String getStudentsTableName() {

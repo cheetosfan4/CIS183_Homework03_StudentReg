@@ -1,6 +1,8 @@
 package com.example.cis183_homework03_studentreg;
 
-public class Student {
+import java.io.Serializable;
+
+public class Student implements Serializable {
     private String username;
     private String fName;
     private String lName;

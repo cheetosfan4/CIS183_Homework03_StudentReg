@@ -3,7 +3,11 @@ package com.example.cis183_homework03_studentreg;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,11 +15,27 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.ArrayList;
+
 public class AddStudentActivity extends AppCompatActivity {
     //for adding new students
 
+    DatabaseHelper dbHelper;
     Button btn_j_back;
+    Button btn_j_add;
+
+    EditText et_j_username;
+    EditText et_j_fName;
+    EditText et_j_lName;
+    EditText et_j_email;
+    EditText et_j_age;
+    EditText et_j_GPA;
+    Spinner spn_j_major;
+
     Intent mainActivity;
+    MajorSpinnerAdapter msAdapter;
+    ArrayList<Major> majorList;
+    int majorID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +47,36 @@ public class AddStudentActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        Intent cameFrom = getIntent();
+
+        //receives majorList from the main activity
+        if(cameFrom.getSerializableExtra("majorList") != null) {
+            majorList = (ArrayList<Major>) cameFrom.getSerializableExtra("majorList");
+        }
+        //if it is somehow null or not received majorList is initialized, but is empty
+        else {
+            majorList = new ArrayList<>();
+        }
 
         btn_j_back = findViewById(R.id.btn_v_addStudent_back);
+        btn_j_add = findViewById(R.id.btn_v_addStudent_add);
+
+        et_j_username = findViewById(R.id.et_v_addStudent_username);
+        et_j_fName = findViewById(R.id.et_v_addStudent_fName);
+        et_j_lName = findViewById(R.id.et_v_addStudent_lName);
+        et_j_email = findViewById(R.id.et_v_addStudent_email);
+        et_j_age = findViewById(R.id.et_v_addStudent_age);
+        et_j_GPA = findViewById(R.id.et_v_addStudent_GPA);
+        spn_j_major = findViewById(R.id.spn_v_addStudent_major);
+
         mainActivity = new Intent(AddStudentActivity.this, MainActivity.class);
+        dbHelper = new DatabaseHelper(this);
+
+        msAdapter = new MajorSpinnerAdapter(this, majorList);
+        spn_j_major.setAdapter(msAdapter);
 
         buttonListener();
+        spinnerListener();
     }
 
     private void buttonListener() {
@@ -41,5 +86,47 @@ public class AddStudentActivity extends AppCompatActivity {
                 startActivity(mainActivity);
             }
         });
+        btn_j_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addStudent();
+                startActivity(mainActivity);
+            }
+        });
+    }
+
+    private void spinnerListener() {
+        spn_j_major.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                majorID = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                majorID = 0;
+            }
+        });
+    }
+
+    private void addStudent() {
+        //sets to position 0 of majorList just to initialize
+        Major major = majorList.get(0);
+        for (int i = 0; i < majorList.size(); i++) {
+            if (majorList.get(i).getID() == majorID) {
+                major = majorList.get(i);
+                break;
+            }
+        }
+        Student student = new Student(
+                et_j_username.getText().toString(),
+                et_j_fName.getText().toString(),
+                et_j_lName.getText().toString(),
+                et_j_email.getText().toString(),
+                Integer.parseInt(et_j_age.getText().toString()),
+                Double.parseDouble(et_j_GPA.getText().toString()),
+                major
+        );
+        dbHelper.addStudentToDatabase(student);
     }
 }
