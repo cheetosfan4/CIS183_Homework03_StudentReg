@@ -65,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
         //adds all of the data currently in the database to the arraylists
         //the arraylists will be passed between screens
         //so, reading the entire database is only done on this screen
-        populateMajorList();
-        populateStudentList();
+        majorList = dbHelper.populateMajorList();
+        studentList = dbHelper.populateStudentList(majorList);
 
         addStudentActivity = new Intent(MainActivity.this, AddStudentActivity.class);
         studentDetailsActivity = new Intent(MainActivity.this, StudentDetailsActivity.class);
@@ -77,14 +77,6 @@ public class MainActivity extends AppCompatActivity {
         lv_j_studentList.setAdapter(slAdapter);
 
         setListeners();
-    }
-
-    private void populateMajorList() {
-
-    }
-
-    private void populateStudentList() {
-
     }
 
     private void setListeners() {
@@ -112,9 +104,5 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(studentSearchActivity);
             }
         });
-    }
-
-    public ArrayList<Student> getStudentList() {
-        return studentList;
     }
 }

@@ -7,12 +7,12 @@ public class Student {
     private String email;
     private int age;
     private double GPA;
-    private String major;
+    private Major major;
 
     public Student() {
 
     }
-    public Student(String u, String f, String l, String e, int a, double g, String m) {
+    public Student(String u, String f, String l, String e, int a, double g, Major m) {
         username = u;
         fName = f;
         lName = l;
@@ -41,7 +41,7 @@ public class Student {
     public double getGPA() {
         return GPA;
     }
-    public String getMajor() {
+    public Major getMajor() {
         return major;
     }
 
@@ -64,7 +64,7 @@ public class Student {
     public void setGPA(double g) {
         GPA = g;
     }
-    public void setMajor(String m) {
+    public void setMajor(Major m) {
         major = m;
     }
 }

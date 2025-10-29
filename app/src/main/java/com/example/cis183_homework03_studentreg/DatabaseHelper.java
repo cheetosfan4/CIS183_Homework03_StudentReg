@@ -1,21 +1,24 @@
 package com.example.cis183_homework03_studentreg;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String database_name = "StudentInfo.db";
     private static final String students_table_name = "Students";
     private static final String majors_table_name = "Majors";
     public DatabaseHelper(Context c) {
-        super(c, database_name, null, 1);
+        super(c, database_name, null, 5);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + students_table_name + " (username varchar(50) primary key not null, fName varchar(50), lName varchar(50), email varchar(50), age integer, GPA decimal(3, 2), foreign key (major) references " + majors_table_name + " (majorID));");
+        db.execSQL("CREATE TABLE " + students_table_name + " (username varchar(50) primary key not null, fName varchar(50), lName varchar(50), email varchar(50), age integer, GPA decimal(3, 2), majorID integer, foreign key (majorID) references " + majors_table_name + " (majorID));");
         db.execSQL("CREATE TABLE " + majors_table_name + " (majorID integer primary key autoincrement not null, majorName varchar(50), majorPrefix varchar(50));");
     }
 
@@ -50,11 +53,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (countRecordsFromTable(students_table_name) == 0) {
             SQLiteDatabase db = this.getReadableDatabase();
 
-            db.execSQL("INSERT INTO " + students_table_name + " (username, fName, lName, email, age, GPA, major) VALUES ('chimchimbooboo13', 'ChimChim', 'BooBoo', 'chimchimbooboo@college.edu', 18, 2.15, 1);");
-            db.execSQL("INSERT INTO " + students_table_name + " (username, fName, lName, email, age, GPA, major) VALUES ('ILikeFrog12', 'Henrick', 'Ventylza', 'henrickventylza@college.edu', 17, 4.00, 2);");
-            db.execSQL("INSERT INTO " + students_table_name + " (username, fName, lName, email, age, GPA, major) VALUES ('chicken4', 'Aleck', 'Phubrint', 'aleckphubrint@college.edu', 20, 3.51, 3);");
-            db.execSQL("INSERT INTO " + students_table_name + " (username, fName, lName, email, age, GPA, major) VALUES ('HelloSchool', 'Ghessil', 'Nuprento', 'ghessilnuprento@college.edu', 17, 3.39, 4);");
-            db.execSQL("INSERT INTO " + students_table_name + " (username, fName, lName, email, age, GPA, major) VALUES ('yarnfriend3', 'Janella', 'Kumplinski', 'janellakumplinski@college.edu', 19, 3.77, 5);");
+            db.execSQL("INSERT INTO " + students_table_name + " (username, fName, lName, email, age, GPA, majorID) VALUES ('chimchimbooboo13', 'ChimChim', 'BooBoo', 'chimchimbooboo@college.edu', 18, 2.15, 1);");
+            db.execSQL("INSERT INTO " + students_table_name + " (username, fName, lName, email, age, GPA, majorID) VALUES ('ILikeFrog12', 'Henrick', 'Ventylza', 'henrickventylza@college.edu', 17, 4.00, 2);");
+            db.execSQL("INSERT INTO " + students_table_name + " (username, fName, lName, email, age, GPA, majorID) VALUES ('chicken4', 'Aleck', 'Phubrint', 'aleckphubrint@college.edu', 20, 3.51, 3);");
+            db.execSQL("INSERT INTO " + students_table_name + " (username, fName, lName, email, age, GPA, majorID) VALUES ('HelloSchool', 'Ghessil', 'Nuprento', 'ghessilnuprento@college.edu', 17, 3.39, 4);");
+            db.execSQL("INSERT INTO " + students_table_name + " (username, fName, lName, email, age, GPA, majorID) VALUES ('yarnfriend3', 'Janella', 'Kumplinski', 'janellakumplinski@college.edu', 19, 3.77, 5);");
 
             db.close();
         }
@@ -66,6 +69,72 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.close();
         return rows;
+    }
+
+    public ArrayList<Major> populateMajorList() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectAll = "SELECT * FROM " + majors_table_name;
+        //selects all of the majors table
+        Cursor cursor = db.rawQuery(selectAll, null);
+
+        int rows = (int) DatabaseUtils.queryNumEntries(db, majors_table_name);
+        ArrayList<Major> majorList = new ArrayList<>();
+
+        //moves cursor to first row of table
+        //if there are no rows in the table, this returns false, skipping the if statement
+        if (cursor.moveToFirst()) {
+            //reads all information from the row and adds it to the list
+            do {
+                Major major = new Major();
+                major.setID(cursor.getInt(0));
+                major.setName(cursor.getString(1));
+                major.setPrefix(cursor.getString(2));
+
+                majorList.add(major);
+            }
+            //only continues the loop if there is another row in the table
+            while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return majorList;
+    }
+
+    //mostly the same as the above function, but for students
+    public ArrayList<Student> populateStudentList(ArrayList<Major> majorList) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectAll = "SELECT * FROM " + students_table_name;
+        Cursor cursor = db.rawQuery(selectAll, null);
+
+        int rows = (int) DatabaseUtils.queryNumEntries(db, students_table_name);
+        ArrayList<Student> studentList = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+            do {
+                int majorID;
+                Student student = new Student();
+                student.setUsername(cursor.getString(0));
+                student.setFirstName(cursor.getString(1));
+                student.setLastName(cursor.getString(2));
+                student.setEmail(cursor.getString(3));
+                student.setAge(cursor.getInt(4));
+                student.setGPA(cursor.getDouble(5));
+                //1 is subtracted because the majorID increments starting at 1, but the array starts at 0
+                majorID = cursor.getInt(6) - 1;
+                //uses the major list to give the student the major object
+                //based on the student's major id in the table
+                student.setMajor(majorList.get(majorID));
+
+
+                studentList.add(student);
+            }
+            while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return studentList;
     }
 
     public String getStudentsTableName() {
