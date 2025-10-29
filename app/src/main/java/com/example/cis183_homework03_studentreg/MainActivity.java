@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 //for viewing all current students
     View main;
+    DatabaseHelper dbHelper;
     TextView tv_j_title;
     ListView lv_j_studentList;
     Button btn_j_addStudent;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     Intent studentSearchActivity;
 
     private ArrayList<Student> studentList;
+    private ArrayList<Major> majorList;
     StudentListAdapter slAdapter;
 
     @Override
@@ -52,20 +54,37 @@ public class MainActivity extends AppCompatActivity {
         btn_j_addMajor = findViewById(R.id.btn_v_main_addMajor);
         btn_j_studentSearch = findViewById(R.id.btn_v_main_studentSearch);
 
+        dbHelper = new DatabaseHelper(this);
+        //gives both the students table and majors table starting data
+        //but, only if they're initially empty
+        dbHelper.dummyData();
+
         studentList = new ArrayList<>();
+        majorList = new ArrayList<>();
+
+        //adds all of the data currently in the database to the arraylists
+        //the arraylists will be passed between screens
+        //so, reading the entire database is only done on this screen
+        populateMajorList();
+        populateStudentList();
 
         addStudentActivity = new Intent(MainActivity.this, AddStudentActivity.class);
         studentDetailsActivity = new Intent(MainActivity.this, StudentDetailsActivity.class);
         addMajorActivity = new Intent(MainActivity.this, AddMajorActivity.class);
         studentSearchActivity = new Intent(MainActivity.this, StudentSearchActivity.class);
 
+        slAdapter = new StudentListAdapter(this, studentList);
+        lv_j_studentList.setAdapter(slAdapter);
+
         setListeners();
     }
 
-    //call this after arraylist has data in it already
-    private void fillListView() {
-        slAdapter = new StudentListAdapter(this, studentList);
-        lv_j_studentList.setAdapter(slAdapter);
+    private void populateMajorList() {
+
+    }
+
+    private void populateStudentList() {
+
     }
 
     private void setListeners() {
@@ -93,5 +112,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(studentSearchActivity);
             }
         });
+    }
+
+    public ArrayList<Student> getStudentList() {
+        return studentList;
     }
 }
