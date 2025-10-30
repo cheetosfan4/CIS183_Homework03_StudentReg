@@ -16,6 +16,8 @@ public class MajorSpinnerAdapter extends BaseAdapter {
     public MajorSpinnerAdapter(Context c, ArrayList<Major> ml) {
         context = c;
         majorList = ml;
+        //Major blank = null;
+        //majorList.add(0, blank);
     }
 
     @Override
@@ -44,8 +46,14 @@ public class MajorSpinnerAdapter extends BaseAdapter {
         TextView tv_j_prefix = convertView.findViewById(R.id.tv_v_majorCell_prefix);
 
         Major major = majorList.get(position);
-        tv_j_name.setText(major.getName());
-        tv_j_prefix.setText(major.getPrefix());
+        if(major != null) {
+            tv_j_name.setText(major.getName());
+            tv_j_prefix.setText(major.getPrefix());
+        }
+        else {
+            tv_j_name.setText("");
+            tv_j_prefix.setText("");
+        }
 
         return convertView;
     }

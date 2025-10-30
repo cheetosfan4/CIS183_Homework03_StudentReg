@@ -13,7 +13,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String students_table_name = "Students";
     private static final String majors_table_name = "Majors";
     public DatabaseHelper(Context c) {
-        super(c, database_name, null, 6);
+        super(c, database_name, null, 7);
     }
 
     @Override
@@ -176,6 +176,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean majorTableContains(String info) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + majors_table_name + " WHERE majorName = '" + info + "' OR majorPrefix = '" + info + "' LIMIT 1", null);
+
+        if(cursor.moveToFirst()) {
+            cursor.close();
+            db.close();
+            return true;
+        }
+        else {
+            cursor.close();
+            db.close();
+            return false;
+        }
+    }
+
+    public boolean studentTableContains(String info) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + students_table_name + " WHERE username = '" + info + "' LIMIT 1", null);
 
         if(cursor.moveToFirst()) {
             cursor.close();
