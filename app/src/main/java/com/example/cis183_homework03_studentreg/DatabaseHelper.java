@@ -173,6 +173,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public boolean majorTableContains(String info) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + majors_table_name + " WHERE majorName = '" + info + "' OR majorPrefix = '" + info + "' LIMIT 1", null);
+
+        if(cursor.moveToFirst()) {
+            cursor.close();
+            db.close();
+            return true;
+        }
+        else {
+            cursor.close();
+            db.close();
+            return false;
+        }
+    }
+
     public String getStudentsTableName() {
         return students_table_name;
     }
@@ -200,5 +216,66 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String information = "fName = '" + fName + "', lName = '" + lName + "', email = '" + email + "', age = " + age + ", GPA = " + GPA + ", majorID = " + majorID;
         db.execSQL("UPDATE " + students_table_name + " SET " + information + " WHERE username = '" + student.getUsername() + "';");
         db.close();
+    }
+
+    public ArrayList<Student> filterStudents(String usernameFilter, String fNameFilter, String lNameFilter, String emailFilter, int ageFilter, double minGPA, double maxGPA, int majorFilter, ArrayList<Major> majorList) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<Student> results = new ArrayList<>();
+        //1=1 added to query as the first condition
+        //this is so all subsequent conditions can just be concatenated starting with AND
+        String query = "SELECT * FROM " + students_table_name + " WHERE 1=1";
+        Cursor cursor;
+
+        if (!usernameFilter.isEmpty()) {
+            query += " AND username = '" + usernameFilter + "'";
+        }
+        if (!fNameFilter.isEmpty()) {
+            query += " AND fName = '" + fNameFilter + "'";
+        }
+        if (!lNameFilter.isEmpty()) {
+            query += " AND lName = '" + lNameFilter + "'";
+        }
+        if (!emailFilter.isEmpty()) {
+            query += " AND email = '" + emailFilter + "'";
+        }
+        if (ageFilter != 999) {
+            query += " AND age = " + ageFilter;
+        }
+        if (minGPA != 999) {
+            query += " AND GPA >= " + minGPA;
+        }
+        if (maxGPA != 999) {
+            query += " AND GPA <= " + maxGPA;
+        }
+        if (majorFilter != 999) {
+            query += " AND majorID = " + majorFilter;
+        }
+
+        cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            do {
+                int majorID;
+                Student student = new Student();
+                student.setUsername(cursor.getString(0));
+                student.setFirstName(cursor.getString(1));
+                student.setLastName(cursor.getString(2));
+                student.setEmail(cursor.getString(3));
+                student.setAge(cursor.getInt(4));
+                student.setGPA(cursor.getDouble(5));
+                majorID = cursor.getInt(6);
+                for (int i = 0; i < majorList.size(); i++) {
+                    if (majorList.get(i).getID() == majorID) {
+                        student.setMajor(majorList.get(i));
+                        break;
+                    }
+                }
+                results.add(student);
+            }
+            while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return results;
     }
 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +23,7 @@ public class AddMajorActivity extends AppCompatActivity {
     Button btn_j_add;
     EditText et_j_name;
     EditText et_j_prefix;
+    TextView tv_j_error;
     Intent mainActivity;
     Intent cameFrom;
     ArrayList<Major> majorList;
@@ -49,6 +51,7 @@ public class AddMajorActivity extends AppCompatActivity {
         btn_j_add = findViewById(R.id.btn_v_addMajor_add);
         et_j_name = findViewById(R.id.et_v_addMajor_name);
         et_j_prefix = findViewById(R.id.et_v_addMajor_prefix);
+        tv_j_error = findViewById(R.id.tv_v_addMajor_error);
 
         mainActivity = new Intent(AddMajorActivity.this, MainActivity.class);
         dbHelper = new DatabaseHelper(this);
@@ -67,14 +70,30 @@ public class AddMajorActivity extends AppCompatActivity {
         btn_j_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Major major = new Major(
-                        et_j_name.getText().toString(),
-                        et_j_prefix.getText().toString()
-                );
-                dbHelper.addMajorToDatabase(major);
-                et_j_name.setText("");
-                et_j_prefix.setText("");
+                createMajor();
+
             }
         });
+    }
+
+    private void createMajor() {
+        if (et_j_name.getText().toString().isEmpty() || et_j_prefix.getText().toString().isEmpty()) {
+            tv_j_error.setVisibility(TextView.VISIBLE);
+            tv_j_error.setText("All fields must be filled out!");
+        }
+        else if (dbHelper.majorTableContains(et_j_name.getText().toString()) || dbHelper.majorTableContains(et_j_prefix.getText().toString())) {
+            tv_j_error.setVisibility(TextView.VISIBLE);
+            tv_j_error.setText("Cannot have duplicate names or prefixes!");
+        }
+        else {
+            tv_j_error.setVisibility(TextView.INVISIBLE);
+            Major major = new Major(
+                    et_j_name.getText().toString(),
+                    et_j_prefix.getText().toString()
+            );
+            dbHelper.addMajorToDatabase(major);
+            et_j_name.setText("");
+            et_j_prefix.setText("");
+        }
     }
 }

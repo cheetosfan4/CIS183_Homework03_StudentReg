@@ -63,8 +63,6 @@ public class MainActivity extends AppCompatActivity {
         majorList = new ArrayList<>();
 
         //adds all of the data currently in the database to the arraylists
-        //the arraylists will be passed between screens
-        //so, reading the entire database is only done on this screen
         majorList = dbHelper.populateMajorList();
         studentList = dbHelper.populateStudentList(majorList);
 
