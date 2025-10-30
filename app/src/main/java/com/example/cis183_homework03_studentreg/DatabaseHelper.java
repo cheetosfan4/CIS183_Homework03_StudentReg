@@ -148,10 +148,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return studentList;
     }
 
-
-
     public void addStudentToDatabase(Student student) {
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = this.getWritableDatabase();
         String username = student.getUsername();
         String fName = student.getFirstName();
         String lName = student.getLastName();
@@ -162,6 +160,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String information = "'" + username + "', '" + fName + "', '" + lName + "', '" + email + "', " + age + ", " + GPA + ", " + majorID;
         db.execSQL("INSERT INTO " + students_table_name + " (username, fName, lName, email, age, GPA, majorID) VALUES (" + information + ");");
+        db.close();
     }
 
     public String getStudentsTableName() {
@@ -169,5 +168,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
     public String getMajorsTableName() {
         return majors_table_name;
+    }
+
+    public void deleteStudentFromDatabase(Student student) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.execSQL("DELETE FROM " + students_table_name + " WHERE username = '" + student.getUsername() + "';");
+        db.close();
+    }
+
+    public void editStudentDetails(Student student) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String username = student.getUsername();
+        String fName = student.getFirstName();
+        String lName = student.getLastName();
+        String email = student.getEmail();
+        int age = student.getAge();
+        double GPA = student.getGPA();
+        int majorID = student.getMajor().getID();
+
+        String information = "fName = '" + fName + "', lName = '" + lName + "', email = '" + email + "', age = " + age + ", GPA = " + GPA + ", majorID = " + majorID;
+        db.execSQL("UPDATE " + students_table_name + " SET " + information + " WHERE username = '" + student.getUsername() + "';");
+        db.close();
     }
 }

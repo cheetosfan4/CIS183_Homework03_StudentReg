@@ -33,6 +33,7 @@ public class AddStudentActivity extends AppCompatActivity {
     Spinner spn_j_major;
 
     Intent mainActivity;
+    Intent cameFrom;
     MajorSpinnerAdapter msAdapter;
     ArrayList<Major> majorList;
     int majorID;
@@ -47,7 +48,7 @@ public class AddStudentActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        Intent cameFrom = getIntent();
+        cameFrom = getIntent();
 
         //receives majorList from the main activity
         if(cameFrom.getSerializableExtra("majorList") != null) {
@@ -75,6 +76,7 @@ public class AddStudentActivity extends AppCompatActivity {
         msAdapter = new MajorSpinnerAdapter(this, majorList);
         spn_j_major.setAdapter(msAdapter);
 
+        majorID = 0;
         buttonListener();
         spinnerListener();
     }
@@ -90,7 +92,13 @@ public class AddStudentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 addStudent();
-                startActivity(mainActivity);
+                et_j_username.setText("");
+                et_j_fName.setText("");
+                et_j_lName.setText("");
+                et_j_email.setText("");
+                et_j_age.setText("");
+                et_j_GPA.setText("");
+                spn_j_major.setSelection(0);
             }
         });
     }

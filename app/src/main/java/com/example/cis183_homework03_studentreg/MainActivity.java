@@ -2,7 +2,9 @@ package com.example.cis183_homework03_studentreg;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -22,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
     TextView tv_j_title;
     ListView lv_j_studentList;
     Button btn_j_addStudent;
-    Button btn_j_studentDetails;
     Button btn_j_addMajor;
     Button btn_j_studentSearch;
 
@@ -50,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
         tv_j_title = findViewById(R.id.tv_v_main_title);
         lv_j_studentList = findViewById(R.id.lv_v_main_studentList);
         btn_j_addStudent = findViewById(R.id.btn_v_main_addStudent);
-        btn_j_studentDetails = findViewById(R.id.btn_v_main_studentDetails);
         btn_j_addMajor = findViewById(R.id.btn_v_main_addMajor);
         btn_j_studentSearch = findViewById(R.id.btn_v_main_studentSearch);
 
@@ -87,12 +87,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(addStudentActivity);
             }
         });
-        btn_j_studentDetails.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(studentDetailsActivity);
-            }
-        });
         btn_j_addMajor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,6 +97,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(studentSearchActivity);
+            }
+        });
+        lv_j_studentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                studentDetailsActivity.putExtra("majorList", majorList);
+                studentDetailsActivity.putExtra("student", studentList.get(position));
+                startActivity(studentDetailsActivity);
+            }
+        });
+        lv_j_studentList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                dbHelper.deleteStudentFromDatabase(studentList.get(position));
+                studentList.remove(position);
+                slAdapter.notifyDataSetChanged();
+                return true;
             }
         });
     }
