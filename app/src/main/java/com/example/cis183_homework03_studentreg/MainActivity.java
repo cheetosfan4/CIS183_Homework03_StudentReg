@@ -90,12 +90,15 @@ public class MainActivity extends AppCompatActivity {
         btn_j_addMajor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                addMajorActivity.putExtra("majorList", majorList);
                 startActivity(addMajorActivity);
             }
         });
         btn_j_studentSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                studentSearchActivity.putExtra("majorList", majorList);
+                studentSearchActivity.putExtra("studentList", studentList);
                 startActivity(studentSearchActivity);
             }
         });

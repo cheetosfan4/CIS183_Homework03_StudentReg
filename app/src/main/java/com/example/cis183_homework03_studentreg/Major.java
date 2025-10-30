@@ -10,8 +10,7 @@ public class Major implements Serializable {
     public Major() {
 
     }
-    public Major(int i, String n, String p) {
-        ID = i;
+    public Major(String n, String p) {
         name = n;
         prefix = p;
     }

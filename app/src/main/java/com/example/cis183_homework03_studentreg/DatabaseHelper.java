@@ -163,6 +163,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void addMajorToDatabase(Major major) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String majorName = major.getName();
+        String majorPrefix = major.getPrefix();
+
+        String information = "'" + majorName + "', '" + majorPrefix + "'";
+        db.execSQL("INSERT INTO " + majors_table_name + " (majorName, majorPrefix) VALUES (" + information + ");");
+        db.close();
+    }
+
     public String getStudentsTableName() {
         return students_table_name;
     }
