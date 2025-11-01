@@ -3,6 +3,7 @@ package com.example.cis183_homework03_studentreg;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -36,7 +37,9 @@ public class StudentSearchActivity extends AppCompatActivity {
     ArrayList<Major> majorList;
     ArrayList<Student> studentList;
     ArrayList<Student> results;
+    MajorSpinnerAdapter msAdapter;
     StudentSearchAdapter ssAdapter;
+    Major selectedMajor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,8 @@ public class StudentSearchActivity extends AppCompatActivity {
 
         dbHelper = new DatabaseHelper(this);
 
+
+
         btn_j_back = findViewById(R.id.btn_v_studentSearch_back);
         btn_j_search = findViewById(R.id.btn_v_studentSearch_search);
         et_j_username = findViewById(R.id.et_v_studentSearch_username);
@@ -82,7 +87,12 @@ public class StudentSearchActivity extends AppCompatActivity {
         ssAdapter = new StudentSearchAdapter(this, studentList);
         lv_j_results.setAdapter(ssAdapter);
 
+        msAdapter = new MajorSpinnerAdapter(this, majorList);
+        spn_j_major.setAdapter(msAdapter);
+        selectedMajor = null;
+
         buttonListener();
+        spinnerListener();
     }
 
     private void buttonListener() {
@@ -96,6 +106,25 @@ public class StudentSearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 search();
+            }
+        });
+    }
+
+    private void spinnerListener() {
+        spn_j_major.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    selectedMajor = null;
+                }
+                else {
+                    selectedMajor = majorList.get(position - 1);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selectedMajor = null;
             }
         });
     }

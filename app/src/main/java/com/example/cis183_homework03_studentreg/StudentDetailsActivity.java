@@ -94,7 +94,7 @@ public class StudentDetailsActivity extends AppCompatActivity {
         for (int i = 0; i < majorList.size(); i++) {
             if (majorList.get(i).getID() == student.getMajor().getID()) {
                 selectedMajor = majorList.get(i);
-                spn_j_major.setSelection(i);
+                spn_j_major.setSelection(i + 1);
                 break;
             }
         }
@@ -122,7 +122,12 @@ public class StudentDetailsActivity extends AppCompatActivity {
         spn_j_major.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedMajor = majorList.get(position);
+                if (position == 0) {
+                    selectedMajor = null;
+                }
+                else {
+                    selectedMajor = majorList.get(position - 1);
+                }
             }
 
             @Override
