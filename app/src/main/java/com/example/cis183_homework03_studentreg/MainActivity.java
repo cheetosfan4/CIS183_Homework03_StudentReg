@@ -96,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 studentSearchActivity.putExtra("majorList", majorList);
-                studentSearchActivity.putExtra("studentList", studentList);
                 startActivity(studentSearchActivity);
             }
         });

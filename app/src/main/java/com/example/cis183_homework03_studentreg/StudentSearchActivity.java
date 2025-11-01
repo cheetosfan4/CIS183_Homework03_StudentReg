@@ -34,6 +34,7 @@ public class StudentSearchActivity extends AppCompatActivity {
     ListView lv_j_results;
     Intent mainActivity;
     Intent cameFrom;
+    Intent studentDetailsActivity;
     ArrayList<Major> majorList;
     ArrayList<Student> studentList;
     ArrayList<Student> results;
@@ -59,16 +60,9 @@ public class StudentSearchActivity extends AppCompatActivity {
         else {
             majorList = new ArrayList<>();
         }
-        if(cameFrom.getSerializableExtra("studentList") != null) {
-            studentList = (ArrayList<Student>) cameFrom.getSerializableExtra("studentList");
-        }
-        else {
-            studentList = new ArrayList<>();
-        }
+        studentList = new ArrayList<>();
 
         dbHelper = new DatabaseHelper(this);
-
-
 
         btn_j_back = findViewById(R.id.btn_v_studentSearch_back);
         btn_j_search = findViewById(R.id.btn_v_studentSearch_search);
@@ -83,6 +77,7 @@ public class StudentSearchActivity extends AppCompatActivity {
         lv_j_results = findViewById(R.id.lv_v_studentSearch_results);
 
         mainActivity = new Intent(StudentSearchActivity.this, MainActivity.class);
+        studentDetailsActivity = new Intent(StudentSearchActivity.this, StudentDetailsActivity.class);
 
         ssAdapter = new StudentSearchAdapter(this, studentList);
         lv_j_results.setAdapter(ssAdapter);
@@ -90,12 +85,29 @@ public class StudentSearchActivity extends AppCompatActivity {
         msAdapter = new MajorSpinnerAdapter(this, majorList);
         spn_j_major.setAdapter(msAdapter);
         selectedMajor = null;
-
-        buttonListener();
-        spinnerListener();
+        
+        setListeners();
+        search();
     }
 
-    private void buttonListener() {
+    private void setListeners() {
+        lv_j_results.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                studentDetailsActivity.putExtra("majorList", majorList);
+                studentDetailsActivity.putExtra("student", results.get(position));
+                studentDetailsActivity.putExtra("starter", "studentSearchActivity");
+                startActivity(studentDetailsActivity);
+            }
+        });
+        lv_j_results.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                dbHelper.deleteStudentFromDatabase(results.get(position));
+                search();
+                return true;
+            }
+        });
         btn_j_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,9 +120,6 @@ public class StudentSearchActivity extends AppCompatActivity {
                 search();
             }
         });
-    }
-
-    private void spinnerListener() {
         spn_j_major.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

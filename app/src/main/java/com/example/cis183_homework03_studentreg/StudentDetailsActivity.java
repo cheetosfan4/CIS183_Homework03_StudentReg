@@ -34,6 +34,8 @@ public class StudentDetailsActivity extends AppCompatActivity {
     Spinner spn_j_major;
 
     Intent mainActivity;
+    Intent studentSearchActivity;
+    Intent returnToPrevious;
     Intent cameFrom;
     MajorSpinnerAdapter msAdapter;
     ArrayList<Major> majorList;
@@ -66,6 +68,15 @@ public class StudentDetailsActivity extends AppCompatActivity {
             student = new Student();
         }
 
+        mainActivity = new Intent(StudentDetailsActivity.this, MainActivity.class);
+        studentSearchActivity = new Intent(StudentDetailsActivity.this, StudentSearchActivity.class);
+        if (cameFrom.getSerializableExtra("starter") != null) {
+            returnToPrevious = studentSearchActivity;
+        }
+        else {
+            returnToPrevious = mainActivity;
+        }
+
         btn_j_back = findViewById(R.id.btn_v_studentDetails_back);
         btn_j_update = findViewById(R.id.btn_v_studentDetails_update);
         tv_j_error = findViewById(R.id.tv_v_studentDetails_error);
@@ -77,7 +88,7 @@ public class StudentDetailsActivity extends AppCompatActivity {
         et_j_GPA = findViewById(R.id.et_v_studentDetails_GPA);
         spn_j_major = findViewById(R.id.spn_v_studentDetails_major);
 
-        mainActivity = new Intent(StudentDetailsActivity.this, MainActivity.class);
+
         dbHelper = new DatabaseHelper(this);
 
         msAdapter = new MajorSpinnerAdapter(this, majorList);
@@ -107,7 +118,8 @@ public class StudentDetailsActivity extends AppCompatActivity {
         btn_j_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(mainActivity);
+                returnToPrevious.putExtra("majorList", majorList);
+                startActivity(returnToPrevious);
             }
         });
         btn_j_update.setOnClickListener(new View.OnClickListener() {
