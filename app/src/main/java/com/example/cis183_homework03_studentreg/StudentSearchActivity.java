@@ -2,6 +2,7 @@ package com.example.cis183_homework03_studentreg;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -38,6 +39,7 @@ public class StudentSearchActivity extends AppCompatActivity {
     ArrayList<Major> majorList;
     ArrayList<Student> studentList;
     ArrayList<Student> results;
+    ArrayList<Object> filters;
     MajorSpinnerAdapter msAdapter;
     StudentSearchAdapter ssAdapter;
     Major selectedMajor;
@@ -85,7 +87,15 @@ public class StudentSearchActivity extends AppCompatActivity {
         msAdapter = new MajorSpinnerAdapter(this, majorList);
         spn_j_major.setAdapter(msAdapter);
         selectedMajor = null;
-        
+
+        if(cameFrom.getSerializableExtra("filters") != null) {
+            filters = (ArrayList<Object>) cameFrom.getSerializableExtra("filters");
+            loadFilters();
+        }
+        else {
+            filters = new ArrayList<>();
+        }
+
         setListeners();
         search();
     }
@@ -94,6 +104,8 @@ public class StudentSearchActivity extends AppCompatActivity {
         lv_j_results.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                saveFilters();
+                studentDetailsActivity.putExtra("filters", filters);
                 studentDetailsActivity.putExtra("majorList", majorList);
                 studentDetailsActivity.putExtra("student", results.get(position));
                 studentDetailsActivity.putExtra("starter", "studentSearchActivity");
@@ -136,6 +148,38 @@ public class StudentSearchActivity extends AppCompatActivity {
                 selectedMajor = null;
             }
         });
+    }
+
+    private void saveFilters() {
+        filters.clear();
+        filters.add(et_j_username.getText().toString());
+        filters.add(et_j_fName.getText().toString());
+        filters.add(et_j_lName.getText().toString());
+        filters.add(et_j_email.getText().toString());
+        filters.add(et_j_age.getText().toString());
+        filters.add(et_j_minGPA.getText().toString());
+        filters.add(et_j_maxGPA.getText().toString());
+        filters.add(spn_j_major.getSelectedItemPosition());
+    }
+
+    private void loadFilters() {
+        String username = (String) filters.get(0);
+        String fName = (String) filters.get(1);
+        String lName = (String) filters.get(2);
+        String email = (String) filters.get(3);
+        String age = (String) filters.get(4);
+        String minGPA = (String) filters.get(5);
+        String maxGPA = (String) filters.get(6);
+        int major = (Integer) filters.get(7);
+
+        et_j_username.setText(username);
+        et_j_fName.setText(fName);
+        et_j_lName.setText(lName);
+        et_j_email.setText(email);
+        et_j_age.setText(age);
+        et_j_minGPA.setText(minGPA);
+        et_j_maxGPA.setText(maxGPA);
+        spn_j_major.setSelection(major);
     }
 
     private void search() {

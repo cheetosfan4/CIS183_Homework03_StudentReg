@@ -39,6 +39,7 @@ public class StudentDetailsActivity extends AppCompatActivity {
     Intent cameFrom;
     MajorSpinnerAdapter msAdapter;
     ArrayList<Major> majorList;
+    ArrayList<Object> filters;
     Student student;
     Major selectedMajor;
 
@@ -66,6 +67,12 @@ public class StudentDetailsActivity extends AppCompatActivity {
         }
         else {
             student = new Student();
+        }
+        if(cameFrom.getSerializableExtra("filters") != null) {
+            filters = (ArrayList<Object>) cameFrom.getSerializableExtra("filters");
+        }
+        else {
+            filters = null;
         }
 
         mainActivity = new Intent(StudentDetailsActivity.this, MainActivity.class);
@@ -119,6 +126,7 @@ public class StudentDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 returnToPrevious.putExtra("majorList", majorList);
+                returnToPrevious.putExtra("filters", filters);
                 startActivity(returnToPrevious);
             }
         });
