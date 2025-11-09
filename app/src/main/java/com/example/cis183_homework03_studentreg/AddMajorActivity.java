@@ -59,7 +59,6 @@ public class AddMajorActivity extends AppCompatActivity {
         buttonListener();
     }
 
-
     private void buttonListener() {
         btn_j_back.setOnClickListener(new View.OnClickListener() {
             @Override

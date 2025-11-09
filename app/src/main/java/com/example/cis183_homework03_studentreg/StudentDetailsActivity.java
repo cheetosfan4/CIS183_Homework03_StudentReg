@@ -77,6 +77,8 @@ public class StudentDetailsActivity extends AppCompatActivity {
 
         mainActivity = new Intent(StudentDetailsActivity.this, MainActivity.class);
         studentSearchActivity = new Intent(StudentDetailsActivity.this, StudentSearchActivity.class);
+        //"starter" is only sent from studentSearchActivity
+        //returnToPrevious is the intent that the back button starts
         if (cameFrom.getSerializableExtra("starter") != null) {
             returnToPrevious = studentSearchActivity;
         }
@@ -95,12 +97,12 @@ public class StudentDetailsActivity extends AppCompatActivity {
         et_j_GPA = findViewById(R.id.et_v_studentDetails_GPA);
         spn_j_major = findViewById(R.id.spn_v_studentDetails_major);
 
-
         dbHelper = new DatabaseHelper(this);
 
         msAdapter = new MajorSpinnerAdapter(this, majorList);
         spn_j_major.setAdapter(msAdapter);
 
+        //the username textbox is not editable, so its text is set as a hint to differentiate it from the other textboxes
         et_j_username.setHint(student.getUsername());
         et_j_fName.setText(student.getFirstName());
         et_j_lName.setText(student.getLastName());
@@ -146,6 +148,7 @@ public class StudentDetailsActivity extends AppCompatActivity {
                     selectedMajor = null;
                 }
                 else {
+                    //subtracts 1 since the spinner's list has 1 extra blank space
                     selectedMajor = majorList.get(position - 1);
                 }
             }

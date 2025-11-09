@@ -104,6 +104,7 @@ public class AddStudentActivity extends AppCompatActivity {
                     selectedMajor = null;
                 }
                 else {
+                    //subtracts 1 since the spinner's list has 1 extra blank space
                     selectedMajor = majorList.get(position - 1);
                 }
             }

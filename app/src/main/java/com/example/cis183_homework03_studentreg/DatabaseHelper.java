@@ -120,15 +120,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 student.setEmail(cursor.getString(3));
                 student.setAge(cursor.getInt(4));
                 student.setGPA(cursor.getDouble(5));
-                /*
-                //1 is subtracted because the majorID increments starting at 1, but the array starts at 0
-                majorID = cursor.getInt(6) - 1;
-                //uses the major list to give the student the major object
-                //based on the student's major id in the table
-                student.setMajor(majorList.get(majorID));
-                */
-                //fixed version of above code, in case a major is removed
-                //this would create a gap in the majorIDs
+
                 majorID = cursor.getInt(6);
                 for (int i = 0; i < majorList.size(); i++) {
                     if (majorList.get(i).getID() == majorID) {
@@ -254,6 +246,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (!emailFilter.isEmpty()) {
             query += " AND email = '" + emailFilter + "'";
         }
+        //integers set to 999 if the textboxes were empty in studentSearchActivity
+        //since integers cannot be null
         if (ageFilter != 999) {
             query += " AND age = " + ageFilter;
         }
@@ -267,6 +261,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             query += " AND majorID = " + majorFilter;
         }
 
+        //searches database based on the above filters, and adds each found student to the results list
+        //then, returns the list of results
         cursor = db.rawQuery(query, null);
         if (cursor.moveToFirst()) {
             do {

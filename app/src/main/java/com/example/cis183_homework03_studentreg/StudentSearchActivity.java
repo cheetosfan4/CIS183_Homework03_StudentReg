@@ -150,6 +150,7 @@ public class StudentSearchActivity extends AppCompatActivity {
         });
     }
 
+    //saveFilters and loadFilters allows whatever the user entered into the textboxes to save when going between studentSearchActivity and studentDetailsActivity
     private void saveFilters() {
         filters.clear();
         filters.add(et_j_username.getText().toString());

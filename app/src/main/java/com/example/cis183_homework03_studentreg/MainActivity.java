@@ -1,3 +1,9 @@
+//====================================================================================================
+//Author        :       Marc McLennan
+//Date          :       11-09-2025
+//Description   :       CIS183 Homework #3, Program #1; Student Registry System
+//====================================================================================================
+
 package com.example.cis183_homework03_studentreg;
 
 import android.content.Intent;
